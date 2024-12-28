@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+const RuleConsentSchema = new mongoose.Schema({
+  accepted: {
+    type: Boolean,
+    default:false,
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const UserSchema = new mongoose.Schema(
   {
     username: {type: String, required: true, unique: true},
@@ -21,6 +33,7 @@ const UserSchema = new mongoose.Schema(
     exposure: {type: Number, default: 0},
     profit_limit: {type: Number, default: 0},
     member_max_credit: {type: Number, default: 0},
+    ruleConsent:{type:RuleConsentSchema, required:false },
     blocked_sports: [
       {
         sportId: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: true },

@@ -1,6 +1,7 @@
 const User = require("../Modal/User");
 const jwt = require("jsonwebtoken");
-
+const UserRoutes = require("../Modal/User-routes");
+const { ObjectId } = require('mongoose').Types;
 const LoginController = async (req, res) => {
   try {
     // Normalize username to lowercase for case-insensitive comparison
@@ -94,6 +95,13 @@ const changePasswordController = async (req, res) => {
   let myobj = req.body;
   console.log(myobj);
   try {
+    const checkPass = await User.findById(req.params.user_id)
+    if (!checkPass ) {
+      return res.status(404).json({ msg: "User not found" });
+      }
+      if (checkPass.password !== req.params.old_pass) {
+        return res.status(200).json({ msg: "Old password is incorrect" });
+        }
     const updateUser = await User.findByIdAndUpdate(
       req.params.user_id,
       {
@@ -109,4 +117,41 @@ const changePasswordController = async (req, res) => {
   }
 };
 
-module.exports = { LoginController, changePasswordController,PanelLoginController,companyLogin};
+const rulesController = async(req,res)=>{
+  let myobj = req.body;
+  console.log(myobj);
+  try {
+    if(!req.body.ruleConsent.accepted){
+      const rules = await User.findById(req.params.user_id);
+      return res
+      .status(200)
+      .json({ status: 1,ruleAccepted: rules.ruleConsent.accepted});
+    }
+    
+    if(req.body.ruleConsent.accepted){
+      const updaterules = await User.findByIdAndUpdate(
+        req.params.user_id,
+        {
+          $set: myobj,
+        }
+      );
+      return res
+        .status(200)
+        .json({ status: 1,ruleAccepted: true});
+    }
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
+const userRoutesController = async(req,res)=>{
+  
+  try {
+    const page = await UserRoutes.find({});
+      return res
+        .status(200)
+        .json({ status: 1,data:page[0].routing_path});
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+}
+module.exports = { LoginController, changePasswordController,PanelLoginController,companyLogin,rulesController,userRoutesController};

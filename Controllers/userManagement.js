@@ -729,8 +729,8 @@ const getBalanceAndExposure = async (req, res) => {
     return res
       .status(200)
       .json({balance: user.credits, exposure: user.exposure});
-  } catch (error) {
-    console.error('Error retrieving user by username:', error);
+  } catch (err) {
+    console.error('Error retrieving user by username:', err);
     return res.status(500).send({error: err.message});
   }
 };

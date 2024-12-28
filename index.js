@@ -31,7 +31,7 @@ app.use(cookieParser());
  
 
 app.get("/", (req, res) => {
-  res.send({ Hi: "KESE HO ? " });
+  res.send({ Hi: "tested ok " });
 });
 app.get('/autoDeclare',autoDeclare);
 app.use("/api/auth", authRoutes);
